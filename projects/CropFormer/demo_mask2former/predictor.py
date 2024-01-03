@@ -11,7 +11,20 @@ import torch
 from detectron2.data import MetadataCatalog
 from detectron2.engine.defaults import DefaultPredictor
 from detectron2.utils.video_visualizer import VideoVisualizer
-from detectron2.utils.visualizer import ColorMode, Visualizer
+from detectron2.utils.visualizer import ColorMode
+from detectron2.utils.visualizer import Visualizer as _Visualizer
+from detectron2.utils.visualizer import _OFF_WHITE, GenericMask
+
+
+class Visualizer(_Visualizer):
+    def overlay_instances(self, masks, labels, boxes=None, keypoints=None, assigned_colors=None, alpha=0.5):
+        # breakpoint()
+        for i, (mask, label) in enumerate(zip(masks, labels)):
+            color = assigned_colors[i] if assigned_colors is not None else None
+            if isinstance(mask, GenericMask):
+                mask = mask.mask
+            self.draw_binary_mask(mask, color=color, edge_color=_OFF_WHITE, text=label, alpha=alpha)
+
 
 
 class VisualizationDemo(object):
