@@ -711,7 +711,7 @@ _PREDEFINED_SPLITS = {
     ),
     "entityv2_entity_train_all_lr": (
         "entityseg/images_lr",
-        "entityseg/annotations/entity_segmentation/entityseg_val_lr.json"
+        "entityseg/annotations/entity_segmentation/entityseg_train_lr.json"
     ),
     "entityv2_entity_val_all_lr": (
         "entityseg/images_lr",
