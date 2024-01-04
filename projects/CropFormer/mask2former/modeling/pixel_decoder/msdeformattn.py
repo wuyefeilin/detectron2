@@ -291,6 +291,18 @@ class MSDeformAttnPixelDecoder(nn.Module):
         self.lateral_convs = lateral_convs[::-1]
         self.output_convs = output_convs[::-1]
 
+        self.output_convs2 = Conv2d(
+                conv_dim+3,
+                conv_dim,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+                bias=use_bias,
+                norm=output_norm,
+                activation=F.relu,
+            )
+        
+
     @classmethod
     def from_config(cls, cfg, input_shape: Dict[str, ShapeSpec]):
         ret = {}
@@ -312,7 +324,7 @@ class MSDeformAttnPixelDecoder(nn.Module):
         return ret
 
     @autocast(enabled=False)
-    def forward_features(self, features):
+    def forward_features(self, features, images):
         srcs = []
         pos = []
         # Reverse feature maps into top-down order (from low to high resolution)
@@ -347,7 +359,13 @@ class MSDeformAttnPixelDecoder(nn.Module):
             cur_fpn = lateral_conv(x)
             # Following FPN implementation, we use nearest upsampling here
             y = cur_fpn + F.interpolate(out[-1], size=cur_fpn.shape[-2:], mode="bilinear", align_corners=False)
-            y = output_conv(y)
+            y = output_conv(y)  # 1/4
+
+            # origin resolution
+            y = F.interpolate(y, size=images.shape[-2:], mode='bilinear', align_corners=False)
+            y = torch.concat([y, images], dim=1)
+            y = self.output_convs2(y)
+
             out.append(y)
 
         for o in out:

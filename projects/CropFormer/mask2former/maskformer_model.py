@@ -199,7 +199,7 @@ class MaskFormer(nn.Module):
         images = ImageList.from_tensors(images, self.size_divisibility)
 
         features = self.backbone(images.tensor)
-        outputs = self.sem_seg_head(features)
+        outputs = self.sem_seg_head(features, images.tensor)
 
         if self.training:
             # mask classification target
@@ -226,12 +226,12 @@ class MaskFormer(nn.Module):
             mask_cls_results = outputs["pred_logits"]
             mask_pred_results = outputs["pred_masks"]
             # upsample masks
-            mask_pred_results = F.interpolate(
-                mask_pred_results,
-                size=(images.tensor.shape[-2], images.tensor.shape[-1]),
-                mode="bilinear",
-                align_corners=False,
-            )
+            # mask_pred_results = F.interpolate(
+            #     mask_pred_results,
+            #     size=(images.tensor.shape[-2], images.tensor.shape[-1]),
+            #     mode="bilinear",
+            #     align_corners=False,
+            # )
 
             del outputs
 
