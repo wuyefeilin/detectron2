@@ -125,6 +125,23 @@ class Trainer(DefaultTrainer):
             torch.nn.LocalResponseNorm,
         )
 
+        if cfg.CUSTOM.STAGE == 'stage1':
+            for module_name, module in model.named_modules():
+                for module_param_name, value in module.named_parameters(recurse=False):
+                    if value.requires_grad:
+                        value.requires_grad=False
+
+            for module_name, module in model.named_modules():
+                if 'output_convs2' in module_name:
+                    print(module_name)
+                    for module_param_name, value in module.named_parameters(recurse=False):
+                        if value.requires_grad==False:
+                            value.requires_grad=True
+            print('*'*20+'the stage1 training'+'*'*20)
+        else:
+            print('*'*20+f'the {cfg.CUSTOM.STAGE} training'+'*'*20)
+        
+
         params: List[Dict[str, Any]] = []
         memo: Set[torch.nn.parameter.Parameter] = set()
         for module_name, module in model.named_modules():
