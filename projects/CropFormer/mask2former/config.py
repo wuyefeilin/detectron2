@@ -137,3 +137,7 @@ def add_maskformer2_config(cfg):
     cfg.MODEL.HORNET.GCONV = ['partial(gnconv, order=2, s=1/3)', 'partial(gnconv, order=3, s=1/3)', 'partial(gnconv, order=4, s=1/3, h=24, w=13, gflayer=GlobalLocalFilter)', 'partial(gnconv, order=5, s=1/3, h=12, w=7, gflayer=GlobalLocalFilter)']
     cfg.MODEL.HORNET.DROP_PATH_RATE=0.6
     cfg.MODEL.HORNET.OUT_FEATURES = ["res2", "res3", "res4", "res5"]
+
+    ## custom
+    cfg.CUSTOM = CN()
+    cfg.CUSTOM.STAGE = 'full'
