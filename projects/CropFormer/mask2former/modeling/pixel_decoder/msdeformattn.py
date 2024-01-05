@@ -291,7 +291,8 @@ class MSDeformAttnPixelDecoder(nn.Module):
         self.lateral_convs = lateral_convs[::-1]
         self.output_convs = output_convs[::-1]
 
-        self.output_convs2 = Conv2d(
+        self.output_convs2 = nn.Sequential(
+            Conv2d(
                 conv_dim+3,
                 conv_dim,
                 kernel_size=3,
@@ -300,7 +301,17 @@ class MSDeformAttnPixelDecoder(nn.Module):
                 bias=use_bias,
                 norm=output_norm,
                 activation=F.relu,
-            )
+            ),
+            Conv2d(
+                conv_dim,
+                conv_dim,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+                bias=use_bias,
+                norm=output_norm,
+                activation=F.relu,
+            ))
         
 
     @classmethod
